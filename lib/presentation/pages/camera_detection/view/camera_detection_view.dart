@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -38,6 +40,21 @@ class CameraDetectionView extends GetView<CameraDetectionController> {
                       controller.controllerCamera,
                     ),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                final photo = await controller.controllerCamera.takePicture();
+                if (photo.path.isNotEmpty) {
+                  controller.photo.value = File(photo.path);
+                }
+              },
+              child: const Text('Capturar rostro'),
+            ),
+            Obx(() => SizedBox(
+                  height: 150,
+                  width: 50,
+                  child: controller.photo.value.path.isNotEmpty ? Image.file(controller.photo.value) : null,
+                ))
           ],
         ),
       ),
