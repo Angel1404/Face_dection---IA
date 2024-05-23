@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 import '../camera_detetion.dart';
 
@@ -34,27 +32,54 @@ class CameraDetectionView extends GetView<CameraDetectionController> {
               ),
               height: 250,
               width: 250,
-              child: !controller.controllerCamera.value.isInitialized
-                  ? null
-                  : CameraPreview(
-                      controller.controllerCamera,
+              child: Obx(
+                () => Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedCrossFade(
+                      firstChild: const SizedBox(),
+                      secondChild: CameraPreview(controller.controllerCamera),
+                      crossFadeState: !controller.isInitializeController.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                      duration: const Duration(milliseconds: 450),
                     ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: AnimatedOpacity(
+                        opacity: controller.namePersonDetected.isEmpty ? 0 : 1,
+                        duration: const Duration(milliseconds: 550),
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 40),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                          ),
+                          child: Column(
+                            children: [
+                              const Text("tú eres: "),
+                              const SizedBox(height: 10),
+                              Text(controller.namePersonDetected.value),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                final photo = await controller.controllerCamera.takePicture();
-                if (photo.path.isNotEmpty) {
-                  controller.photo.value = File(photo.path);
-                }
-              },
-              child: const Text('Capturar rostro'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () async {},
+                  child: const Text('Registar rostro'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {},
+                  child: const Text('Detectar rostro'),
+                ),
+              ],
             ),
-            Obx(() => SizedBox(
-                  height: 150,
-                  width: 50,
-                  child: controller.photo.value.path.isNotEmpty ? Image.file(controller.photo.value) : null,
-                ))
           ],
         ),
       ),

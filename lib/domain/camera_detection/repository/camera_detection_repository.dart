@@ -1,8 +1,8 @@
 part of domain.camera_detection;
 
 abstract class ICameraDetection {
-  Future registerFace(String namePerson, String imageBse64);
-  Future detectedFace(String imageBse64);
+  Future<String> registerFace(RegisterPersonModel registerPersonModel);
+  Future<String> detectedFace(String imageBse64);
 }
 
 class CameraDetectionRepository implements ICameraDetection {
@@ -11,18 +11,18 @@ class CameraDetectionRepository implements ICameraDetection {
   final CameraDetectionService _cameraDetectionService;
 
   @override
-  Future detectedFace(String imageBse64) async {
+  Future<String> detectedFace(String imageBse64) async {
     try {
-      _cameraDetectionService.detectedFace(imageBse64);
+      return await _cameraDetectionService.detectedFace(imageBse64);
     } catch (e) {
       throw e.toString();
     }
   }
 
   @override
-  Future registerFace(String namePerson, String imageBse64) async {
+  Future<String> registerFace(RegisterPersonModel registerPersonModel) async {
     try {
-      _cameraDetectionService.registerFace(namePerson, imageBse64);
+      return await _cameraDetectionService.registerFace(registerPersonModel.toJson());
     } catch (e) {
       throw e.toString();
     }
