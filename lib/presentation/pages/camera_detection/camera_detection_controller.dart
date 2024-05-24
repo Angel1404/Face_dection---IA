@@ -16,7 +16,7 @@ class CameraDetectionController extends GetxController {
 
   CameraController get controllerCamera => _controllerCamera;
   final isInitializeController = false.obs;
-
+  bool isOrientationCamera = false;
   @override
   void onInit() {
     super.onInit();
@@ -24,13 +24,19 @@ class CameraDetectionController extends GetxController {
   }
 
   initData() async {
-    _controllerCamera = CameraController(cameras.first, ResolutionPreset.max, enableAudio: false);
+    _controllerCamera = CameraController(cameras.last, ResolutionPreset.max, enableAudio: false);
     await _controllerCamera.initialize();
     isInitializeController.value = _controllerCamera.value.isInitialized;
   }
 
+  changeFace() {
+    final newisOrientationCamera = isOrientationCamera = !isOrientationCamera;
+    _controllerCamera.setDescription(newisOrientationCamera ? cameras.last : cameras.first);
+  }
+
   Future<String> _takePicture() async {
-    return (await _controllerCamera.takePicture()).path;
+    final take = await _controllerCamera.takePicture();
+    return take.path.isNotEmpty ? take.path : "";
   }
 
   Future<BaseResponse> registerFace(String namePerson) async {
@@ -50,10 +56,12 @@ class CameraDetectionController extends GetxController {
     try {
       final imageBase64 = await convertFileToBase64(await _takePicture());
 
-      namePersonDetected.value = await _cameraDetectionRepo.detectedFace(imageBase64);
-
+      final response = await _cameraDetectionRepo.detectedFace(imageBase64);
+      namePersonDetected.value = ResponseRecoModel.fromJson(response).recognizedFaceId.first.first;
+      print("response: $response");
       return BaseResponse();
     } catch (e) {
+      print("Error contrroller: $e");
       return BaseResponse.errorStr(e.toString());
     }
   }

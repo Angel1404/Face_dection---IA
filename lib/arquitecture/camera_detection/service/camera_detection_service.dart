@@ -5,7 +5,7 @@ class CameraDetectionService extends GetConnect {
 
   Future<String> registerFace(Map<String, dynamic> data) async {
     try {
-      final response = await post("url", data);
+      final response = await post("http://192.168.1.144:5000/guardar_rostro", data);
       if (response.statusCode != 200) throw response.body;
 
       return response.body["message"];
@@ -14,13 +14,14 @@ class CameraDetectionService extends GetConnect {
     }
   }
 
-  Future<String> detectedFace(String imageBse64) async {
+  Future<Map<String, dynamic>> detectedFace(String imageBse64) async {
     try {
-      final response = await post("url", {"imagen": imageBse64});
+      final response = await post("http://192.168.1.144:5000/reconocer_rostro", {"imagen": imageBse64});
       if (response.statusCode != 200) throw response.body;
 
-      return response.body["recognized_face_id"];
+      return response.body;
     } catch (e) {
+      print("Error ser : $e");
       throw e.toString();
     }
   }

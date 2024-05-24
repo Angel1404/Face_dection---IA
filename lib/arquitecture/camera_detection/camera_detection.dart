@@ -6,3 +6,4 @@ import 'package:get/get.dart';
 
 part 'service/camera_detection_service.dart';
 part 'models/register_person_model.dart';
+part 'models/response_reco_model.dart';

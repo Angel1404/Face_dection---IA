@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'bindings/binding_app.dart';
 import 'presentation/presentation.dart';
 
 void main() async {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.CAMERADETECTION,
       defaultTransition: Transition.fadeIn,
       getPages: AppPages.pages,
+      initialBinding: InitialBinding(),
     );
   }
 }
